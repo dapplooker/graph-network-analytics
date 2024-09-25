@@ -1,0 +1,338 @@
+## Delegation Manager
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  ## Delegation Manager
+  - kind: ethereum
+    name: DelegationManager
+    network: mainnet
+    source:
+      address: "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A"
+      abi: DelegationManager
+      startBlock: 19612227
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - MinWithdrawalDelayBlocksSet
+        - OperatorDetailsModified
+        - OperatorMetadataURIUpdated
+        - OperatorRegistered
+        - OperatorSharesDecreased
+        - OperatorSharesIncreased
+        - StakerDelegated
+        - StakerForceUndelegated
+        - StakerUndelegated
+        - StrategyWithdrawalDelayBlocksSet
+        - WithdrawalCompleted
+        - WithdrawalMigrated
+        - WithdrawalQueued
+      abis:
+        - name: DelegationManager
+          file: ./abis/DelegationManager.json
+        - name: EigenPodManager
+          file: ./abis/EigenPodManager.json
+        - name: EigenPod
+          file: ./abis/EigenPod.json
+        - name: StrategyManager
+          file: ./abis/StrategyManager.json
+        - name: Strategy
+          file: ./abis/Strategy.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: CurvePool
+          file: ./abis/Prices/Curve/Pool.json
+        - name: CurveRegistry
+          file: ./abis/Prices/Curve/Registry.json
+        - name: CalculationsCurve
+          file: ./abis/Prices/Calculations/Curve.json
+        - name: YearnLensContract
+          file: ./abis/Prices/YearnLens.json
+        - name: AaveOracleContract
+          file: ./abis/Prices/AaveOracle.json
+        - name: CalculationsSushiSwap
+          file: ./abis/Prices/Calculations/SushiSwap.json
+        - name: ChainLinkContract
+          file: ./abis/Prices/ChainLink.json
+        - name: UniswapRouter
+          file: ./abis/Prices/Uniswap/Router.json
+        - name: UniswapFactory
+          file: ./abis/Prices/Uniswap/Factory.json
+        - name: _ERC20
+          file: ./abis/_ERC20.json
+        - name: UniswapPair
+          file: ./abis/Prices/Uniswap/Pair.json
+      eventHandlers:
+        - event: MinWithdrawalDelayBlocksSet(uint256,uint256)
+          handler: handleMinWithdrawalDelayBlocksSet
+        - event: OperatorDetailsModified(indexed address,(address,address,uint32))
+          handler: handleOperatorDetailsModified
+        - event: OperatorMetadataURIUpdated(indexed address,string)
+          handler: handleOperatorMetadataURIUpdated
+        - event: OperatorRegistered(indexed address,(address,address,uint32))
+          handler: handleOperatorRegistered
+        - event: OperatorSharesDecreased(indexed address,address,address,uint256)
+          handler: handleOperatorSharesDecreased
+        - event: OperatorSharesIncreased(indexed address,address,address,uint256)
+          handler: handleOperatorSharesIncreased
+        - event: StakerDelegated(indexed address,indexed address)
+          handler: handleStakerDelegated
+        - event: StakerForceUndelegated(indexed address,indexed address)
+          handler: handleStakerForceUndelegated
+        - event: StakerUndelegated(indexed address,indexed address)
+          handler: handleStakerUndelegated
+        - event: StrategyWithdrawalDelayBlocksSet(address,uint256,uint256)
+          handler: handleStrategyWithdrawalDelayBlocksSet
+        - event: WithdrawalCompleted(bytes32)
+          handler: handleWithdrawalCompletedDM
+          receipt: true
+        - event: WithdrawalMigrated(bytes32,bytes32)
+          handler: handleWithdrawalMigrated
+        - event: WithdrawalQueued(bytes32,(address,address,address,uint256,uint32,address[],uint256[]))
+          handler: handleWithdrawalQueued
+          receipt: true
+      file: ./src/mappings/handlers.ts
+  ## Strategy Manager
+  - kind: ethereum
+    mapping:
+      abis:
+        - name: StrategyManager
+          file: ./abis/StrategyManager.json
+        - name: Strategy
+          file: ./abis/Strategy.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: CurvePool
+          file: ./abis/Prices/Curve/Pool.json
+        - name: CurveRegistry
+          file: ./abis/Prices/Curve/Registry.json
+        - name: CalculationsCurve
+          file: ./abis/Prices/Calculations/Curve.json
+        - name: YearnLensContract
+          file: ./abis/Prices/YearnLens.json
+        - name: AaveOracleContract
+          file: ./abis/Prices/AaveOracle.json
+        - name: CalculationsSushiSwap
+          file: ./abis/Prices/Calculations/SushiSwap.json
+        - name: ChainLinkContract
+          file: ./abis/Prices/ChainLink.json
+        - name: UniswapRouter
+          file: ./abis/Prices/Uniswap/Router.json
+        - name: UniswapFactory
+          file: ./abis/Prices/Uniswap/Factory.json
+        - name: UniswapPair
+          file: ./abis/Prices/Uniswap/Pair.json
+        - name: _ERC20
+          file: ./abis/_ERC20.json
+      apiVersion: 0.0.7
+      entities:
+        - Protocol
+      eventHandlers:
+        - event: StrategyAddedToDepositWhitelist(address)
+          handler: handleStrategyAdded
+        - event: StrategyRemovedFromDepositWhitelist(address)
+          handler: handleStrategyRemoved
+        - event: 'Deposit(address,address,address,uint256)'
+          handler: handleDeposit
+          receipt: true
+        - event: 'ShareWithdrawalQueued(address,uint96,address,uint256)'
+          handler: handleShareWithdrawalQueued
+          receipt: true
+        - event: 'WithdrawalCompleted(indexed address,uint96,indexed address,bytes32)'
+          handler: handleWithdrawalCompleted
+          receipt: true
+      file: ./src/mappings/handlers.ts
+      kind: ethereum/events
+      language: wasm/assemblyscript
+    name: StrategyManager
+    network: mainnet
+    source:
+      abi: StrategyManager
+      address: '0x858646372CC42E1A627fcE94aa7A7033e7CF075A'
+      startBlock: 17445564
+  ## EigenPod Manager
+  - kind: ethereum
+    mapping:
+      abis:
+        - name: EigenPodManager
+          file: ./abis/EigenPodManager.json
+        - name: EigenPod
+          file: ./abis/EigenPod.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: CurvePool
+          file: ./abis/Prices/Curve/Pool.json
+        - name: CurveRegistry
+          file: ./abis/Prices/Curve/Registry.json
+        - name: CalculationsCurve
+          file: ./abis/Prices/Calculations/Curve.json
+        - name: YearnLensContract
+          file: ./abis/Prices/YearnLens.json
+        - name: AaveOracleContract
+          file: ./abis/Prices/AaveOracle.json
+        - name: CalculationsSushiSwap
+          file: ./abis/Prices/Calculations/SushiSwap.json
+        - name: ChainLinkContract
+          file: ./abis/Prices/ChainLink.json
+        - name: UniswapRouter
+          file: ./abis/Prices/Uniswap/Router.json
+        - name: UniswapFactory
+          file: ./abis/Prices/Uniswap/Factory.json
+        - name: _ERC20
+          file: ./abis/_ERC20.json
+        - name: UniswapPair
+          file: ./abis/Prices/Uniswap/Pair.json
+      apiVersion: 0.0.7
+      entities:
+        - Protocol
+      eventHandlers:
+        - event: 'PodDeployed(indexed address,indexed address)'
+          handler: handlePodDeployed
+      file: ./src/mappings/handlers.ts
+      kind: ethereum/events
+      language: wasm/assemblyscript
+    name: EigenPodManager
+    network: mainnet
+    source:
+      abi: EigenPodManager
+      address: '0x91E677b07F7AF907ec9a428aafA9fc14a0d3A338'
+      startBlock: 17445564
+#  ## AVS Directory
+  - kind: ethereum
+    name: AVSDirectory
+    network: mainnet
+    source:
+      address: "0x135DDa560e946695d6f155dACaFC6f1F25C1F5AF"
+      abi: AVSDirectory
+      startBlock: 19492759
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - AVSMetadataURIUpdated
+        - OperatorAVSRegistrationStatusUpdated
+      abis:
+        - name: AVSDirectory
+          file: ./abis/AVSDirectory.json
+        - name: EigenPodManager
+          file: ./abis/EigenPodManager.json
+        - name: EigenPod
+          file: ./abis/EigenPod.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: CurvePool
+          file: ./abis/Prices/Curve/Pool.json
+        - name: CurveRegistry
+          file: ./abis/Prices/Curve/Registry.json
+        - name: CalculationsCurve
+          file: ./abis/Prices/Calculations/Curve.json
+        - name: YearnLensContract
+          file: ./abis/Prices/YearnLens.json
+        - name: AaveOracleContract
+          file: ./abis/Prices/AaveOracle.json
+        - name: CalculationsSushiSwap
+          file: ./abis/Prices/Calculations/SushiSwap.json
+        - name: ChainLinkContract
+          file: ./abis/Prices/ChainLink.json
+        - name: UniswapRouter
+          file: ./abis/Prices/Uniswap/Router.json
+        - name: UniswapFactory
+          file: ./abis/Prices/Uniswap/Factory.json
+        - name: _ERC20
+          file: ./abis/_ERC20.json
+        - name: UniswapPair
+          file: ./abis/Prices/Uniswap/Pair.json
+      eventHandlers:
+        - event: AVSMetadataURIUpdated(indexed address,string)
+          handler: handleAVSMetadataURIUpdated
+        - event: OperatorAVSRegistrationStatusUpdated(indexed address,indexed address,uint8)
+          handler: handleOperatorAVSRegistrationStatusUpdated
+      file: ./src/avs-directory.ts
+
+######################################## Might be used in future ########################################
+#  ## Slasher
+#  - kind: ethereum
+#    name: Slasher
+#    network: mainnet
+#    source:
+#      address: "0xD92145c07f8Ed1D392c1B88017934E301CC1c3Cd"
+#      abi: Slasher
+#      startBlock: 17445564
+#    mapping:
+#      kind: ethereum/events
+#      apiVersion: 0.0.7
+#      language: wasm/assemblyscript
+#      entities:
+#        - FrozenStatusReset
+#        - MiddlewareTimesAdded
+#        - OperatorFrozen
+#        - OptedIntoSlashing
+#        - SlashingAbilityRevoked
+#      abis:
+#        - name: Slasher
+#          file: ./abis/Slasher.json
+#      eventHandlers:
+#        - event: FrozenStatusReset(indexed address)
+#          handler: handleFrozenStatusReset
+#        - event: MiddlewareTimesAdded(address,uint256,uint32,uint32)
+#          handler: handleMiddlewareTimesAdded
+#        - event: OperatorFrozen(indexed address,indexed address)
+#          handler: handleOperatorFrozen
+#        - event: OptedIntoSlashing(indexed address,indexed address)
+#          handler: handleOptedIntoSlashing
+#        - event: SlashingAbilityRevoked(indexed address,indexed address,uint32)
+#          handler: handleSlashingAbilityRevoked
+#      file: ./src/slasher.ts
+#  ## Rewards Coordinator
+#  - kind: ethereum
+#    name: RewardsCoordinator
+#    network: mainnet
+#    source:
+#      address: "0x7750d328b314EfFa365A0402CcfD489B80B0adda"
+#      abi: RewardsCoordinator
+#      startBlock: 20341793
+#    mapping:
+#      kind: ethereum/events
+#      apiVersion: 0.0.7
+#      language: wasm/assemblyscript
+#      entities:
+#        - AVSRewardsSubmissionCreated
+#        - ActivationDelaySet
+#        - ClaimerForSet
+#        - DistributionRootDisabled
+#        - DistributionRootSubmitted
+#        - GlobalCommissionBipsSet
+#        - RewardsClaimed
+#        - RewardsForAllSubmitterSet
+#        - RewardsSubmissionForAllCreated
+#        - RewardsUpdaterSet
+#      abis:
+#        - name: RewardsCoordinator
+#          file: ./abis/RewardsCoordinator.json
+#      eventHandlers:
+#        - event: AVSRewardsSubmissionCreated(indexed address,indexed uint256,indexed bytes32,((address,uint96)[],address,uint256,uint32,uint32))
+#          handler: handleAVSRewardsSubmissionCreated
+#        - event: ActivationDelaySet(uint32,uint32)
+#          handler: handleActivationDelaySet
+#        - event: ClaimerForSet(indexed address,indexed address,indexed address)
+#          handler: handleClaimerForSet
+#        - event: DistributionRootDisabled(indexed uint32)
+#          handler: handleDistributionRootDisabled
+#        - event: DistributionRootSubmitted(indexed uint32,indexed bytes32,indexed uint32,uint32)
+#          handler: handleDistributionRootSubmitted
+#        - event: GlobalCommissionBipsSet(uint16,uint16)
+#          handler: handleGlobalCommissionBipsSet
+#        - event: RewardsClaimed(bytes32,indexed address,indexed address,indexed address,address,uint256)
+#          handler: handleRewardsClaimed
+#        - event: RewardsForAllSubmitterSet(indexed address,indexed bool,indexed bool)
+#          handler: handleRewardsForAllSubmitterSet
+#        - event: RewardsSubmissionForAllCreated(indexed address,indexed uint256,indexed bytes32,((address,uint96)[],address,uint256,uint32,uint32))
+#          handler: handleRewardsSubmissionForAllCreated
+#        - event: RewardsUpdaterSet(indexed address,indexed address)
+#          handler: handleRewardsUpdaterSet
+#      file: ./src/rewards-coordinator.ts
