@@ -1,0 +1,18 @@
+{
+  "name": "eigen-layer-mainnet",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ eigenlayer-subgraph",
+    "create-local": "graph create --node https://graph-api.dapplooker.com/deploy/ eigenlayer-data-set --access-token <>",
+    "remove-local": "graph create --node https://graph-api.dapplooker.com/deploy/ eigenlayer-data-set --access-token <>",
+    "deploy-local": "graph deploy --node https://graph-api.dapplooker.com/deploy/ --ipfs https://graph-api.dapplooker.com/ipfs/api/v0 eigenlayer-data-set --access-token <>",
+    "test": "graph test"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.80.1",
+    "@graphprotocol/graph-ts": "0.32.0"
+  },
+  "devDependencies": { "matchstick-as": "0.5.0" }
+}

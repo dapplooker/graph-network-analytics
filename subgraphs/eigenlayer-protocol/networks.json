@@ -1,0 +1,8 @@
+{
+  "mainnet": {
+    "DelegationManager": {
+      "address": "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A",
+      "startBlock": 17445563
+    }
+  }
+}
